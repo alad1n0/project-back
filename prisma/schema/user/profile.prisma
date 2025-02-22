@@ -1,0 +1,36 @@
+model UserProfile {
+  id       String  @id @default(uuid())
+  userId   String  @unique
+  fullName String
+  phone    String
+  address  String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_profiles")
+}
+
+model DriverProfile {
+  id            String @id @default(uuid())
+  userId        String @unique
+  fullName      String
+  phone         String
+  vehicle       String
+  licenseNumber String
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("driver_profiles")
+}
+
+model RestaurantProfile {
+  id      String @id @default(uuid())
+  userId  String @unique
+  name    String
+  address String
+  phone   String
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("restaurant_profiles")
+}

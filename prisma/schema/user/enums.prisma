@@ -1,0 +1,6 @@
+enum Role {
+  USER
+  DRIVER
+  RESTAURANT
+  ADMIN
+}
