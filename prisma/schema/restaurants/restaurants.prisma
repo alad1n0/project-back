@@ -1,0 +1,12 @@
+model Restaurant {
+  id              String   @id @default(uuid())
+  name            String
+  address         String
+  numberOfWorkers Int
+  description     String?
+  rating          Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+   @@map("restaurants")
+}
