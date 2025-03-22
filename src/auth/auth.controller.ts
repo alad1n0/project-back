@@ -1,22 +1,23 @@
-import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
+import { OauthDto } from './dto/oauth.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @UseGuards(AuthGuard('local'))
-  @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  @Post('otp')
+  sendCode(@Body('phone') phone: string) {
+    return this.authService.sendCode(phone);
   }
 
-  @Post('register')
-  async register(
-    @Body('email') email: string,
-    @Body('password') password: string
-  ) {
-    return this.authService.register(email, password);
+  @Post('otp-verify')
+  otpVerify(@Body('phone') phone: string, @Body('code') code: string) {
+    return this.authService.verifyOtp(phone, code);
+  }
+
+  @Post('oauth')
+  oauthLogin(@Body() oauthDto: OauthDto) {
+    return this.authService.oauthLogin(oauthDto);
   }
 }

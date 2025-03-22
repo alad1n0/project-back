@@ -5,8 +5,10 @@ import { ValidationPipe } from '@nestjs/common';
 
 dotenv.config();
 
-async function bootstrap() {
+(async () => {
+  
   const app = await NestFactory.create(AppModule);
+
   app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -15,10 +17,15 @@ async function bootstrap() {
       })
   );
 
+  app.enableCors({
+    origin: true,
+  });
+
+  app.setGlobalPrefix('api');
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
 
   console.log(`🚀 Server is running on http://localhost:${port}`);
 
-}
-bootstrap();
+})();

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class ResponseHelper {
-  success(data?: any, code: number = 200, message: string = 'success') {
+  success(data?: any, message: string = 'success', code: number = 200,) {
     const response: any = {
       success: true,
       code,

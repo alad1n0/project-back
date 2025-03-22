@@ -1,9 +1,9 @@
 model UserProfile {
-  id       String  @id @default(uuid())
-  userId   String  @unique
-  fullName String
-  phone    String
-  address  String?
+  id        String  @id @default(uuid())
+  userId    String  @unique
+  firstName String?
+  lastName  String?
+  address   String?
 
   user User @relation(fields: [userId], references: [id])
 

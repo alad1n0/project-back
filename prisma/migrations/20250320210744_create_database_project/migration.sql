@@ -1,9 +1,35 @@
 -- CreateTable
+CREATE TABLE `otp_codes` (
+    `id` VARCHAR(191) NOT NULL,
+    `phone` VARCHAR(191) NOT NULL,
+    `code` VARCHAR(191) NOT NULL,
+    `expiresAt` DATETIME(3) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `otp_codes_phone_key`(`phone`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `restaurants` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `address` VARCHAR(191) NOT NULL,
+    `numberOfWorkers` INTEGER NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `rating` DOUBLE NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `user_profiles` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
-    `fullName` VARCHAR(191) NOT NULL,
-    `phone` VARCHAR(191) NOT NULL,
+    `firstName` VARCHAR(191) NULL,
+    `lastName` VARCHAR(191) NULL,
     `address` VARCHAR(191) NULL,
 
     UNIQUE INDEX `user_profiles_userId_key`(`userId`),
@@ -38,12 +64,15 @@ CREATE TABLE `restaurant_profiles` (
 -- CreateTable
 CREATE TABLE `users` (
     `id` VARCHAR(191) NOT NULL,
-    `email` VARCHAR(191) NOT NULL,
-    `password` VARCHAR(191) NOT NULL,
+    `email` VARCHAR(191) NULL,
+    `password` VARCHAR(191) NULL,
+    `provider` VARCHAR(191) NULL,
+    `providerId` VARCHAR(191) NULL,
     `role` ENUM('USER', 'DRIVER', 'RESTAURANT', 'ADMIN') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `users_email_key`(`email`),
+    UNIQUE INDEX `users_providerId_key`(`providerId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
