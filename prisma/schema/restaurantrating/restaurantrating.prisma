@@ -1,0 +1,12 @@
+model RestaurantRating {
+  id           String   @id @default(uuid())
+  userId       String
+  restaurantId String
+  rating       Int     
+  createdAt    DateTime @default(now())
+
+  user         User       @relation(fields: [userId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@unique([userId, restaurantId])
+}

@@ -32,4 +32,12 @@ export class RestaurantsService {
       where: { id },
     });
   }
+
+  async findTopRestaurants(): Promise<Restaurant[]> {
+    return this.prisma.restaurant.findMany({
+      orderBy: { rating: 'desc' },
+      take: 8,
+    });
+  }
+  
 }

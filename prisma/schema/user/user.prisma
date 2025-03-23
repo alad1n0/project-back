@@ -13,5 +13,8 @@ model User {
   driverProfile     DriverProfile?
   restaurantProfile RestaurantProfile?
 
+  ratings           RestaurantRating[]
+  favorites         Favorite[]
+
   @@map("users")
 }

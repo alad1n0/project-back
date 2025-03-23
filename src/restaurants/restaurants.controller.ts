@@ -33,4 +33,9 @@ export class RestaurantsController {
   remove(@Param('id') id: string) {
     return this.restaurantsService.remove(id);
   }
+
+  @Get('top')
+getTopRestaurants() {
+  return this.restaurantsService.findTopRestaurants();
+}
 }

@@ -24,14 +24,14 @@ export class AuthService {
       create: { phone, code: otp, expiresAt },
     });
 
-    return this.responseHelper.success([], 'Code sent successfully');
+    return this.responseHelper.success([], 'Code sent successfully'); //return stuctural Json
   }
 
   async verifyOtp(phone: string, code: string) {
     const otpRecord = await this.prisma.otpCode.findUnique({ where: { phone } });
     if (!otpRecord || otpRecord.code !== code || new Date() > otpRecord.expiresAt) {
       throw new UnauthorizedException('Invalid or expired OTP');
-    }
+    } 
 
     await this.prisma.otpCode.delete({ where: { phone } });
 

@@ -7,6 +7,15 @@ model Restaurant {
   rating          Float?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  banner            String?   
+  logo              String?   
+  workingHours      String?   
+  deliveryPrice     Float?    
+  cookingTime       Int?      
+  minimumOrderPrice Float?    
+
+   favorites       Favorite[]
+  ratings         RestaurantRating[]
 
    @@map("restaurants")
 }
