@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, Query  } from '@nestjs/common';
 import { RestaurantsService } from './restaurants.service';
 import { Prisma } from '@prisma/client';
+
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -38,4 +39,19 @@ export class RestaurantsController {
 getTopRestaurants() {
   return this.restaurantsService.findTopRestaurants();
 }
+
+@Get('search')
+  search(@Query() query: any) {
+    const filters = {
+      name: query.name,
+      minDeliveryPrice: query.minDeliveryPrice ? Number(query.minDeliveryPrice) : undefined,
+      maxDeliveryPrice: query.maxDeliveryPrice ? Number(query.maxDeliveryPrice) : undefined,
+      minCookingTime: query.minCookingTime ? Number(query.minCookingTime) : undefined,
+      maxCookingTime: query.maxCookingTime ? Number(query.maxCookingTime) : undefined,
+      minRating: query.minRating ? Number(query.minRating) : undefined,
+      maxRating: query.maxRating ? Number(query.maxRating) : undefined,
+    };
+    return this.restaurantsService.searchRestaurants(filters);
+  }
+
 }

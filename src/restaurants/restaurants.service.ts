@@ -40,4 +40,46 @@ export class RestaurantsService {
     });
   }
   
+  async searchRestaurants(filters: {
+    name?: string;
+    minDeliveryPrice?: number;
+    maxDeliveryPrice?: number;
+    minCookingTime?: number;
+    maxCookingTime?: number;
+    minRating?: number;
+    maxRating?: number;
+  }): Promise<Pick<Restaurant, 'name' | 'deliveryPrice' | 'cookingTime' | 'rating' | 'banner'>[]> {
+    const restaurants = await this.prisma.restaurant.findMany({
+      where: {
+        name: filters.name ? { contains: filters.name } : undefined,
+        deliveryPrice: (filters.minDeliveryPrice || filters.maxDeliveryPrice)
+          ? {
+              gte: filters.minDeliveryPrice,
+              lte: filters.maxDeliveryPrice,
+            }
+          : undefined,
+        cookingTime: (filters.minCookingTime || filters.maxCookingTime)
+          ? {
+              gte: filters.minCookingTime,
+              lte: filters.maxCookingTime,
+            }
+          : undefined,
+        rating: (filters.minRating || filters.maxRating)
+          ? {
+              gte: filters.minRating,
+              lte: filters.maxRating,
+            }
+          : undefined,
+      },
+      select: {
+        name: true,
+        deliveryPrice: true,
+        cookingTime: true,
+        rating: true,
+        banner: true,
+      },
+    });
+    return restaurants;
+  }
+
 }
