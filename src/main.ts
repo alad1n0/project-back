@@ -6,26 +6,26 @@ import { ValidationPipe } from '@nestjs/common';
 dotenv.config();
 
 (async () => {
-  
-  const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-      })
-  );
+    const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: true,
-  });
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transform: true,
+        })
+    );
 
-  app.setGlobalPrefix('api');
+    app.enableCors({
+        origin: true,
+    });
 
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
+    app.setGlobalPrefix('api');
 
-  console.log(`🚀 Server is running on http://localhost:${port}`);
+    const port = process.env.PORT || 3000;
+    await app.listen(port);
+
+    console.log(`🚀 Server is running on http://localhost:${port}`);
 
 })();

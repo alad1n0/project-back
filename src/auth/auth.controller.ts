@@ -20,4 +20,15 @@ export class AuthController {
   oauthLogin(@Body() oauthDto: OauthDto) {
     return this.authService.oauthLogin(oauthDto);
   }
+
+  @Post('admin')
+  adminLogin(@Body('email') email: string, @Body('password') password: string) {
+    return this.authService.adminLogin(email, password);
+  }
+
+  @Post('refresh')
+  refreshAccessToken(@Body('refreshToken') refreshToken: string) {
+    console.log(1)
+    return this.authService.refreshAccessToken(refreshToken);
+  }
 }
