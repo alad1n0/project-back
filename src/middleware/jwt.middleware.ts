@@ -9,8 +9,6 @@ export class JwtMiddleware implements NestMiddleware {
     use(req: Request, res: Response, next: NextFunction) {
         const bearerToken = req.headers['authorization']?.split(' ')[1];
 
-        console.log(bearerToken);
-
         if (!bearerToken) {
             console.log('No token');
             return next();

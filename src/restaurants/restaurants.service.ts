@@ -9,7 +9,8 @@ export class RestaurantsService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly responseHelper: ResponseHelper
-    ) {}
+    ) {
+    }
 
     async findAll(req: Request, paginationDto: GetRestaurantDto): Promise<Partial<Restaurant>[]> {
         const userData = req['jwt_payload'];
@@ -31,7 +32,7 @@ export class RestaurantsService {
                 cookingTime: true,
                 deliveryPrice: true,
                 favorites: userData ? {
-                    where: {userId: userData.id},
+                    where: {userId: userData.sub},
                     select: {id: true},
                 } : false,
             }
@@ -85,14 +86,36 @@ export class RestaurantsService {
         return this.responseHelper.success(formattedRestaurants);
     }
 
+    async findOneRestaurant(id: string): Promise<Restaurant> {
+        const restaurant = await this.prisma.restaurant.findUnique({
+            where: {id},
+            select: {
+                id: true,
+                name: true,
+                address: true,
+                numberOfWorkers: true,
+                description: true,
+                banner: true,
+                rating: true,
+                logo: true,
+                workingHours: true,
+                cookingTime: true,
+                deliveryPrice: true,
+                minimumOrderPrice: true,
+            }
+        });
+
+        const formattedRestaurant = {
+            ...restaurant,
+            banner: restaurant.banner ? `${process.env.FILE_BASE_URL}/${restaurant.banner}` : null,
+            logo: restaurant.logo ? `${process.env.FILE_BASE_URL}/${restaurant.logo}` : null,
+        };
+
+        return this.responseHelper.success(formattedRestaurant);
+    }
+
     // create(data: Prisma.RestaurantCreateInput): Promise<Restaurant> {
     //   return this.prisma.restaurant.create({ data });
-    // }
-
-    // findOne(id: string): Promise<Restaurant | null> {
-    //   return this.prisma.restaurant.findUnique({
-    //     where: { id },
-    //   });
     // }
 
     // update(id: string, data: Prisma.RestaurantUpdateInput): Promise<Restaurant> {

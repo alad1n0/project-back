@@ -1,4 +1,4 @@
-import {Controller, Get, Query, Req} from '@nestjs/common';
+import {Controller, Get, Param, Query, Req} from '@nestjs/common';
 import {RestaurantsService} from './restaurants.service';
 import {GetRestaurantDto} from "./dto/get-restaurant.dto";
 
@@ -16,14 +16,14 @@ export class RestaurantsController {
         return this.restaurantsService.findTopRestaurants(req);
     }
 
+    @Get('get-restaurant/:id')
+    findOne(@Param('id') id: string) {
+      return this.restaurantsService.findOneRestaurant(id);
+    }
+
     // @Post()
     // create(@Body() createRestaurantDto: Prisma.RestaurantCreateInput) {
     //   return this.restaurantsService.create(createRestaurantDto);
-    // }
-
-    // @Get(':id')
-    // findOne(@Param('id') id: string) {
-    //   return this.restaurantsService.findOne(id);
     // }
 
     // @Patch(':id')

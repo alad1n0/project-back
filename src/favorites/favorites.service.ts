@@ -27,29 +27,25 @@ export class FavoritesService {
         });
 
         if (existingFavorite) {
-            await this.prisma.favorite.delete({
-                where: {
-                    id: existingFavorite.id,
-                },
-            });
-
             const updatedRestaurant = await this.prisma.restaurant.findUnique({
                 where: {
                     id: actionsFavoriteDto.restaurantId,
                 },
                 select: {
                     id: true,
-                    name: true,
-                    favorites: {
-                        where: {userId: userData.sub},
-                        select: {id: true},
-                    },
+                    name: true
+                },
+            });
+
+            await this.prisma.favorite.delete({
+                where: {
+                    id: existingFavorite.id,
                 },
             });
 
             const formattedRestaurant = {
                 ...updatedRestaurant,
-                isFavorite: updatedRestaurant ? updatedRestaurant.favorites.length > 0 : false,
+                isFavorite: false,
             };
 
             return this.responseHelper.success(formattedRestaurant, 'Restaurant removed from favorites');
@@ -68,36 +64,64 @@ export class FavoritesService {
                 select: {
                     id: true,
                     name: true,
-                    favorites: {
-                        where: {userId: userData.sub},
-                        select: {id: true},
-                    },
                 },
             });
 
             const formattedRestaurant = {
                 ...updatedRestaurant,
-                isFavorite: updatedRestaurant ? updatedRestaurant.favorites.length > 0 : false,
+                isFavorite: true,
             };
 
             return this.responseHelper.success(formattedRestaurant, 'Restaurant added to favorites');
         }
     }
 
-    // findAllFavorites(): Promise<Favorite[]> {
-    //   return this.prisma.favorite.findMany();
-    // }
+    async getAllFavorites(req: Request): Promise<Favorite[]> {
+        const userData = req['jwt_payload'];
 
-    // findFavoriteById(id: string): Promise<Favorite | null> {
-    //   return this.prisma.favorite.findUnique({
-    //     where: { id },
-    //   });
-    // }
+        if (!userData || !userData.sub) {
+            throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
+        }
 
-    // updateFavorite(id: string, data: Partial<Favorite>): Promise<Favorite> {
-    //   return this.prisma.favorite.update({
-    //     where: { id },
-    //     data,
-    //   });
-    // }
+        const favorites = await this.prisma.favorite.findMany({
+            where: {
+                userId: userData.sub,
+            },
+            select: {
+                restaurant: {
+                    select: {
+                        id: true,
+                        name: true,
+                        banner: true,
+                        rating: true,
+                        workingHours: true,
+                        cookingTime: true,
+                        deliveryPrice: true,
+                        favorites: {
+                            where: {userId: userData.sub},
+                            select: {id: true},
+                        },
+                    },
+                }
+            },
+        });
+
+        const formattedRestaurants = favorites
+            .filter(f => f.restaurant !== null)
+            .map(f => {
+                const r = f.restaurant;
+                return {
+                    id: r.id,
+                    name: r.name,
+                    banner: r.banner ? `${process.env.FILE_BASE_URL}/${r.banner}` : null,
+                    rating: r.rating,
+                    workingHours: r.workingHours,
+                    cookingTime: r.cookingTime,
+                    deliveryPrice: r.deliveryPrice,
+                    isFavorite: r.favorites.length > 0,
+                };
+            });
+
+        return this.responseHelper.success(formattedRestaurants);
+    }
 }
