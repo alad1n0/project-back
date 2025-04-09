@@ -22,7 +22,8 @@ import {JwtModule} from "@nestjs/jwt";
     UsersModule,
     FavoritesModule,
     RestaurantsModule,
-    RestaurantsModule
+    RestaurantsModule,
+    
   ],
   providers: [PrismaService],
 })

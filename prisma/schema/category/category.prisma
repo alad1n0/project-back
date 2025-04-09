@@ -1,0 +1,6 @@
+model Categories {
+    id          Int      @id @default(autoincrement())
+    name        String
+    imageUrl    String?
+    description String?   @db.Text
+  }
