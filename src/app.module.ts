@@ -24,7 +24,7 @@ import {CategoriesModule} from "./categories/categories.module";
     FavoritesModule,
     RestaurantsModule,
     RestaurantsModule,
-    CategoriesModule
+    CategoriesModule,
   ],
   providers: [PrismaService],
 })

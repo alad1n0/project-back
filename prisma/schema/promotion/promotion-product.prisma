@@ -1,5 +1,6 @@
 model PromotionProduct {
-  id          String    @id @default(uuid())
+  id String @id @default(uuid())
+
   promotionId String
   productId   String
   promotion   Promotion @relation(fields: [promotionId], references: [id])

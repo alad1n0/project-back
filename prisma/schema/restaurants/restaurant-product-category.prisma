@@ -1,0 +1,11 @@
+model RestaurantProductCategory {
+  id           String @id @default(uuid())
+  restaurantId String
+  categoryId   String
+
+  restaurant Restaurant      @relation(fields: [restaurantId], references: [id])
+  category   ProductCategory @relation(fields: [categoryId], references: [id])
+
+  @@unique([restaurantId, categoryId])
+  @@map("restaurant_product_categories")
+}

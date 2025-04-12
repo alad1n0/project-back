@@ -1,12 +1,14 @@
 model ProductOption {
-  id        String @id @default(uuid())
-  name      String
-  productId String
-  price     Float
+  id    String  @id @default(uuid())
+  name  String
+  price Float
+  image String?
 
-  product             Product            @relation(fields: [productId], references: [id])
-  RestaurantProduct   RestaurantProduct? @relation(fields: [restaurantProductId], references: [id])
+  productId           String
   restaurantProductId String?
+
+  product           Product            @relation(fields: [productId], references: [id])
+  restaurantProduct RestaurantProduct? @relation(fields: [restaurantProductId], references: [id])
 
   @@map("product_options")
 }

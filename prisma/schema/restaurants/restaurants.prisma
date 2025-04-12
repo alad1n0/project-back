@@ -17,10 +17,10 @@ model Restaurant {
   favorites Favorite[]
   ratings   RestaurantRating[]
 
-  promotions          Promotion[]
-  categoryRestaurants CategoryRestaurant[]
-  restaurantProducts  RestaurantProduct[]
-  ProductCategory     ProductCategory[]
+  promotions                  Promotion[]
+  categoryRestaurants         CategoryRestaurant[]
+  restaurantProducts          RestaurantProduct[]
+  restaurantProductCategories RestaurantProductCategory[]
 
   @@map("restaurants")
 }

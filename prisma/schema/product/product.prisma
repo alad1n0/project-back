@@ -1,15 +1,20 @@
 model Product {
   id          String  @id @default(uuid())
   name        String
+  image       String?
   description String?
   isAllergen  Boolean @default(false)
-  group       String?
 
   categoryId String
   category   ProductCategory @relation(fields: [categoryId], references: [id])
 
-  options ProductOption[]
+  subcategoryId String?
+  subcategory   ProductSubcategory? @relation(fields: [subcategoryId], references: [id])
 
+  sizes              ProductSize[]
+  options            ProductOption[]
   restaurantProducts RestaurantProduct[]
-  PromotionProduct   PromotionProduct[]
+  promotionProduct   PromotionProduct[]
+
+  @@map("products")
 }

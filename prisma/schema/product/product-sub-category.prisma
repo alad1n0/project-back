@@ -1,0 +1,12 @@
+model ProductSubcategory {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  categoryId String
+  category   ProductCategory @relation(fields: [categoryId], references: [id])
+
+  product Product[]
+
+  @@map("product_sub_categories")
+}
