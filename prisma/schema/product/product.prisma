@@ -1,7 +1,15 @@
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          String  @id @default(uuid())
   name        String
   description String?
-  group       String? 
-  isAllergen  Boolean  @default(false)
+  isAllergen  Boolean @default(false)
+  group       String?
+
+  categoryId String
+  category   ProductCategory @relation(fields: [categoryId], references: [id])
+
+  options ProductOption[]
+
+  restaurantProducts RestaurantProduct[]
+  PromotionProduct   PromotionProduct[]
 }

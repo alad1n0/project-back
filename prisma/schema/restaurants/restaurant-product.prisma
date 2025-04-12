@@ -1,0 +1,16 @@
+model RestaurantProduct {
+  id           String  @id @default(uuid())
+  restaurantId String
+  productId    String
+  price        Float
+  discount     Float?
+  isAvailable  Boolean @default(true)
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+  product    Product    @relation(fields: [productId], references: [id])
+
+  options ProductOption[]
+
+  @@unique([restaurantId, productId])
+  @@map("restaurant_products")
+}

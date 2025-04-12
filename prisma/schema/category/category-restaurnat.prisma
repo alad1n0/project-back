@@ -1,0 +1,10 @@
+model CategoryRestaurant {
+  categoryId   String
+  restaurantId String
+
+  category   Categories @relation(fields: [categoryId], references: [id])
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
+
+  @@id([categoryId, restaurantId])
+  @@map("category_restaurant")
+}

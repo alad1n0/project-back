@@ -9,20 +9,41 @@ export class RestaurantsService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly responseHelper: ResponseHelper
-    ) {
-    }
+    ) {}
 
     async findAll(req: Request, paginationDto: GetRestaurantDto): Promise<Partial<Restaurant>[]> {
         const userData = req['jwt_payload'];
 
-        const {page = 1, limit = 20} = paginationDto;
+        const {page = 1, limit = 20, categoryId, sortByPopularity, isFreeDelivery} = paginationDto;
         const skip = (page - 1) * limit;
+
+        console.log(sortByPopularity);
+
+        console.log(sortByPopularity ? 'sortByPopularity' : 'not sortByPopularity');
+
+        console.log(isFreeDelivery ? 'isFreeDelivery' : 'not isFreeDelivery');
+
+        const where: any = {};
+
+        if (categoryId) {
+            where.categoryRestaurants = {
+                some: {
+                    categoryId,
+                },
+            };
+        }
+
+        if (isFreeDelivery) {
+            where.deliveryPrice = 0;
+        }
 
         const totalItems = await this.prisma.restaurant.count();
 
         const restaurants = await this.prisma.restaurant.findMany({
+            where,
             skip,
             take: limit,
+            orderBy: sortByPopularity ? { rating: 'desc' } : undefined,
             select: {
                 id: true,
                 name: true,
@@ -71,7 +92,7 @@ export class RestaurantsService {
                 cookingTime: true,
                 deliveryPrice: true,
                 favorites: userData ? {
-                    where: {userId: userData.id},
+                    where: {userId: userData.sub},
                     select: {id: true},
                 } : false,
             }

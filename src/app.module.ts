@@ -8,6 +8,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import {JwtMiddleware} from "./middleware/jwt.middleware";
 import {JwtModule} from "@nestjs/jwt";
+import {CategoriesModule} from "./categories/categories.module";
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import {JwtModule} from "@nestjs/jwt";
     FavoritesModule,
     RestaurantsModule,
     RestaurantsModule,
-    
+    CategoriesModule
   ],
   providers: [PrismaService],
 })

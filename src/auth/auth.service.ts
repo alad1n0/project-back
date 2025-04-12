@@ -6,12 +6,14 @@ import {Role} from '@prisma/client';
 import {addMinutes} from 'date-fns';
 import {OauthDto} from './dto/oauth.dto';
 import * as bcrypt from 'bcryptjs';
+import {OtpService} from "../service/otp/otp.service";
 
 @Injectable()
 export class AuthService {
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
+        private otpService: OtpService,
         private responseHelper: ResponseHelper
     ) {}
 
@@ -25,7 +27,13 @@ export class AuthService {
             create: {phone, code: otp, expiresAt},
         });
 
-        return this.responseHelper.success([], 'Code sent successfully');
+        const sendOtpCode = await this.otpService.sendOtpCode(phone, otp);
+
+        if (sendOtpCode) {
+            return this.responseHelper.success([], 'Code sent successfully');
+        } else {
+            return this.responseHelper.error('Failed to send OTP code', 500);
+        }
     }
 
     async verifyOtp(phone: string, code: string) {
@@ -36,9 +44,10 @@ export class AuthService {
 
         await this.prisma.otpCode.delete({where: {phone}});
 
-        let user = await this.prisma.user.findUnique({where: {phone}});
+        let user = await this.prisma.user.findUnique({ where: { phone } });
+        let isNewUser = !user;
 
-        if (!user) {
+        if (isNewUser) {
             user = await this.prisma.user.create({
                 data: {
                     phone,
@@ -53,15 +62,37 @@ export class AuthService {
             });
         }
 
-        return this.generateTokens(user.id, user.role);
+        const userProfile = await this.prisma.userProfile.findUnique({
+            where: { userId: user.id },
+        });
+
+        isNewUser = !(userProfile?.firstName && userProfile?.lastName);
+
+        const tokens = this.generateTokens(user.id, user.role);
+
+        return this.responseHelper.success({tokens, isNewUser}, 'OTP verified successfully');
+    }
+
+    async otpfinalize(phone: string, firstName: string, lastName: string) {
+        await this.prisma.user.update({
+            where: {phone: phone},
+            data: {
+                userProfile: {
+                    update: {
+                        firstName: firstName,
+                        lastName: lastName,
+                    }
+                }
+            },
+        })
+
+         return this.responseHelper.success([], 'Profile updated successfully');
     }
 
     async oauthLogin(oauthDto: OauthDto) {
         let user = await this.prisma.user.findUnique({
             where: {providerId: oauthDto.providerId},
         });
-
-        console.log(user);
 
         if (!user) {
             user = await this.prisma.user.create({
@@ -101,7 +132,9 @@ export class AuthService {
             throw new UnauthorizedException('You are not an admin');
         }
 
-        return this.generateTokens(user.id, user.role);
+        const tokens = this.generateTokens(user.id, user.role);
+
+        return this.responseHelper.success({tokens}, 'Admin logged in successfully');
     }
 
     async refreshAccessToken(refreshToken: string) {
@@ -132,9 +165,9 @@ export class AuthService {
         const accessToken = this.jwtService.sign(payload, {expiresIn: '15m'});
         const refreshToken = this.jwtService.sign(payload, {expiresIn: '7d'});
 
-        return this.responseHelper.success({
+        return {
             access_token: accessToken,
-            refresh_token: refreshToken
-        }, 'Tokens generated successfully');
+            refresh_token: refreshToken,
+        };
     }
 }

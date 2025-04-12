@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {Body, Controller, Post} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { OauthDto } from './dto/oauth.dto';
 
@@ -19,6 +19,11 @@ export class AuthController {
   @Post('oauth')
   oauthLogin(@Body() oauthDto: OauthDto) {
     return this.authService.oauthLogin(oauthDto);
+  }
+
+  @Post('otp-finalize')
+  otpfinalize(@Body('phone') phone: string, @Body('firstName') firstName: string, @Body('lastName') lastName: string) {
+    return this.authService.otpfinalize(phone, firstName, lastName);
   }
 
   @Post('admin')

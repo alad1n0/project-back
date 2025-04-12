@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { LocalStrategy } from '../guard/auth.guard';
 import { ResponseHelper } from 'src/helper/response.helper';
+import {OtpService} from "../service/otp/otp.service";
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ResponseHelper } from 'src/helper/response.helper';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, LocalStrategy, ResponseHelper],
+  providers: [AuthService, PrismaService, LocalStrategy, ResponseHelper, OtpService],
   exports: [AuthService],
 })
 export class AuthModule {}

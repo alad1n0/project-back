@@ -1,0 +1,15 @@
+model Promotion {
+  id           String     @id @default(uuid())
+  name         String
+  description  String?
+  banner       String?
+  discount     Float
+  startDate    DateTime
+  endDate      DateTime
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+
+  promotionProducts PromotionProduct[]
+
+  @@map("promotions")
+}

@@ -1,0 +1,10 @@
+model PromotionProduct {
+  id          String    @id @default(uuid())
+  promotionId String
+  productId   String
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id])
+
+  @@unique([promotionId, productId])
+  @@map("promotion_products")
+}

@@ -6,28 +6,33 @@ import { Categories } from '@prisma/client';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Post()
-  create(@Body() body: { name: string; imageUrl?: string; description?: string }): Promise<Categories> {
-    return this.categoriesService.createCategory(body);
-  }
-
-  @Get()
-  findAll(): Promise<Categories[]> {
+  @Get('get-all')
+  findAll() {
     return this.categoriesService.findAllCategories();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Categories | null> {
-    return this.categoriesService.findCategoryById(+id);
+  @Get('get-top')
+  findTop() {
+    return this.categoriesService.filndTopCategories();
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() data: Partial<Categories>): Promise<Categories> {
-    return this.categoriesService.updateCategory(+id, data);
-  }
+  // @Post()
+  // create(@Body() body: { name: string; imageUrl?: string; description?: string }): Promise<Categories> {
+  //   return this.categoriesService.createCategory(body);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string): Promise<Categories> {
-    return this.categoriesService.removeCategory(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string): Promise<Categories | null> {
+  //   return this.categoriesService.findCategoryById(+id);
+  // }
+  //
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() data: Partial<Categories>): Promise<Categories> {
+  //   return this.categoriesService.updateCategory(+id, data);
+  // }
+  //
+  // @Delete(':id')
+  // remove(@Param('id') id: string): Promise<Categories> {
+  //   return this.categoriesService.removeCategory(+id);
+  // }
 }

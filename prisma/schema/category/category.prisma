@@ -1,6 +1,13 @@
 model Categories {
-    id          Int      @id @default(autoincrement())
-    name        String
-    imageUrl    String?
-    description String?   @db.Text
-  }
+  id          String  @id @default(uuid())
+  name        String
+  imageUrl    String?
+  description String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  categoryRestaurants CategoryRestaurant[]
+
+  @@map("categories")
+}
