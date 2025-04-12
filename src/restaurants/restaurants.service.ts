@@ -135,22 +135,22 @@ export class RestaurantsService {
         return this.responseHelper.success(formattedRestaurant);
     }
 
-    async findProductRestaurantCategory(restaurantId: string): Promise<Partial<Restaurant>[]> {
-        const categories = await this.prisma.productCategory.findMany({
-            where: {
-                restaurantId,
-            },
-            select: {
-                id: true,
-                name: true,
-            },
-        });
-
-
-
-
-        return this.responseHelper.success();
-    }
+    // async findProductRestaurantCategory(restaurantId: string): Promise<Partial<Restaurant>[]> {
+    //     const categories = await this.prisma.productCategory.findMany({
+    //         where: {
+    //             restaurantId,
+    //         },
+    //         select: {
+    //             id: true,
+    //             name: true,
+    //         },
+    //     });
+    //
+    //
+    //
+    //
+    //     return this.responseHelper.success();
+    // }
 
     // create(data: Prisma.RestaurantCreateInput): Promise<Restaurant> {
     //   return this.prisma.restaurant.create({ data });

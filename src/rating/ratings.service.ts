@@ -4,8 +4,7 @@ import {RestaurantRating} from '@prisma/client';
 
 @Injectable()
 export class RatingsService {
-    constructor(private readonly prisma: PrismaService) {
-    }
+    constructor(private readonly prisma: PrismaService) {}
 
     createRating(
         userId: string,
