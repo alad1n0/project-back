@@ -7,13 +7,14 @@ export class ProductService {
 
 
   async findAllProducts() {
-
     const products = await this.prisma.product.findMany({
       include: {
         sizes: true,
         options: true,
-        category: true,
-        subcategory: true 
+        category: { 
+          include: { subcategories: true }
+        },
+        subcategory: true,
       },
     });
 
@@ -31,8 +32,10 @@ export class ProductService {
       include: {
         sizes: true,
         options: true,
-        category: true,
-        subcategory: true
+        category: { 
+          include: { subcategories: true }
+        },
+        subcategory: true,
       },
     });
 
