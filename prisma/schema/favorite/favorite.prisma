@@ -4,9 +4,8 @@ model Favorite {
   restaurantId String
   createdAt    DateTime @default(now())
 
-  user         User       @relation(fields: [userId], references: [id])
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
   @@unique([userId, restaurantId])
 }
-

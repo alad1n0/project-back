@@ -4,7 +4,7 @@ import { AuthController } from './auth.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { LocalStrategy } from '../guard/auth.guard';
+import { LocalStrategy } from './guard/auth.guard';
 import { ResponseHelper } from 'src/helper/response.helper';
 import {OtpService} from "../service/otp/otp.service";
 

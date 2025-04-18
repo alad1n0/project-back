@@ -1,20 +1,21 @@
 model User {
-  id         String    @id @default(uuid())
-  email      String?   @unique
-  phone      String?   @unique
+  id         String  @id @default(uuid())
+  email      String? @unique
+  phone      String? @unique
   password   String?
   provider   String?
-  providerId String?   @unique
-  role       Role      @default(USER)
+  providerId String? @unique
+  role       Role    @default(USER)
 
-  createdAt  DateTime  @default(now())
+  createdAt DateTime @default(now())
 
   userProfile       UserProfile?
   driverProfile     DriverProfile?
   restaurantProfile RestaurantProfile?
 
-  ratings           RestaurantRating[]
-  favorites         Favorite[]
+  ratings     RestaurantRating[]
+  favorites   Favorite[]
+  basketItems BasketItem[]
 
   @@map("users")
 }

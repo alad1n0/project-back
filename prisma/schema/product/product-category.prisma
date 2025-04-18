@@ -6,6 +6,7 @@ model ProductCategory {
   subcategories             ProductSubcategory[]
   products                  Product[]
   restaurantProductCategory RestaurantProductCategory[]
+  basketItems               BasketItem[]
 
   @@unique([name])
   @@map("product_categories")

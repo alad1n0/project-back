@@ -15,6 +15,7 @@ model Product {
   options            ProductOption[]
   restaurantProducts RestaurantProduct[]
   promotionProduct   PromotionProduct[]
+  basketItems        BasketItem[]
 
   @@map("products")
 }
