@@ -2,7 +2,7 @@ import {ResponseHelper} from '../helper/response.helper';
 import {PrismaService} from '../prisma/prisma.service';
 import {Injectable, UnauthorizedException} from '@nestjs/common';
 import {JwtService} from '@nestjs/jwt';
-import {Role} from '@prisma/client';
+import {$Enums, Role} from '@prisma/client';
 import {addMinutes} from 'date-fns';
 import {OauthDto} from './dto/oauth.dto';
 import * as bcrypt from 'bcryptjs';
@@ -44,7 +44,7 @@ export class AuthService {
 
         await this.prisma.otpCode.delete({where: {phone}});
 
-        let user = await this.prisma.user.findUnique({ where: { phone } });
+        let user = await this.prisma.user.findUnique({where: {phone}});
         let isNewUser = !user;
 
         if (isNewUser) {
@@ -63,7 +63,7 @@ export class AuthService {
         }
 
         const userProfile = await this.prisma.userProfile.findUnique({
-            where: { userId: user.id },
+            where: {userId: user.id},
         });
 
         isNewUser = !(userProfile?.firstName && userProfile?.lastName);
@@ -86,22 +86,36 @@ export class AuthService {
             },
         })
 
-         return this.responseHelper.success([], 'Profile updated successfully');
+        return this.responseHelper.success([], 'Profile updated successfully');
     }
 
     async oauthLogin(oauthDto: OauthDto) {
-        let user = await this.prisma.user.findUnique({
-            where: {providerId: oauthDto.providerId},
-        });
+        let user: { id: string; phone: string | null; createdAt: Date; email: string | null; password: string | null; provider: string | null; googleId: string | null; facebookId: string | null; role: $Enums.Role; };
+
+        if (oauthDto.provider === "google") {
+            user = await this.prisma.user.findUnique({
+                where: { googleId: oauthDto.providerId },
+            });
+        } else if (oauthDto.provider === "facebook") {
+            user = await this.prisma.user.findUnique({
+                where: { facebookId: oauthDto.providerId },
+            });
+        }
 
         if (!user) {
+            const dataToCreate: any = {
+                email: oauthDto.email,
+                role: Role.USER,
+            };
+
+            if (oauthDto.provider === "google") {
+                dataToCreate.googleId = oauthDto.providerId;
+            } else if (oauthDto.provider === "facebook") {
+                dataToCreate.facebookId = oauthDto.providerId;
+            }
+
             user = await this.prisma.user.create({
-                data: {
-                    email: oauthDto.email,
-                    provider: oauthDto.provider,
-                    providerId: oauthDto.providerId,
-                    role: Role.USER,
-                },
+                data: dataToCreate,
             });
 
             await this.prisma.userProfile.create({

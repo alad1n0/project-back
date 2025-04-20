@@ -1,7 +1,9 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable, UnauthorizedException} from '@nestjs/common';
 import {PrismaService} from "../prisma/prisma.service";
 import {ResponseHelper} from "../helper/response.helper";
 import {Request} from "express";
+import {UpdateUserProfileDto} from "./dto/update-user-profile.dto";
+import {UpdateUserPhoneDto} from "./dto/update-user-phone.dto";
 
 @Injectable()
 export class UsersService {
@@ -36,12 +38,14 @@ export class UsersService {
         return this.responseHelper.success(users, 'Users fetched successfully');
     }
 
-    async updateUserProfile(req: Request, firstName: string, lastName: string) {
+    async updateUserProfile(req: Request, body: UpdateUserProfileDto) {
         const userData = req['jwt_payload'];
 
         if (!userData || !userData.sub) {
             throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
         }
+
+        const { firstName, lastName } = body;
 
         await this.prisma.user.update({
             where: {id: userData.sub},
@@ -58,12 +62,22 @@ export class UsersService {
         return this.responseHelper.success([], 'Profile updated successfully');
     }
 
-    async updateUserPhone(req: Request, phone: string) {
+    async updateUserPhone(req: Request, body: UpdateUserPhoneDto) {
         const userData = req['jwt_payload'];
 
         if (!userData || !userData.sub) {
             throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
         }
+
+        const { phone, otp } = body;
+
+        const otpRecord = await this.prisma.otpCode.findUnique({where: {phone}});
+
+        if (!otpRecord || otpRecord.code !== otp || new Date() > otpRecord.expiresAt) {
+            throw new UnauthorizedException('Invalid or expired OTP');
+        }
+
+        await this.prisma.otpCode.delete({where: {phone}});
 
         await this.prisma.user.update({
             where: {id: userData.sub},

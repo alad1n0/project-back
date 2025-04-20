@@ -4,7 +4,6 @@ import { RestaurantsController } from './restaurants.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { ResponseHelper } from "../helper/response.helper";
 import {MulterModule} from "@nestjs/platform-express";
-import {JwtModule, JwtService} from "@nestjs/jwt";
 
 @Module({
   imports: [

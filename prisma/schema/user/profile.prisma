@@ -7,6 +7,8 @@ model UserProfile {
 
   user User @relation(fields: [userId], references: [id])
 
+  addresses Address[]
+
   @@map("user_profiles")
 }
 

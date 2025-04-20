@@ -8,4 +8,5 @@ model Favorite {
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
 
   @@unique([userId, restaurantId])
+  @@map("favorites")
 }

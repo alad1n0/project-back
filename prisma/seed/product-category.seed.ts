@@ -12,7 +12,6 @@ async function seedProductCategory() {
         {name: 'Фрі'},
         {name: 'Салати'},
         {name: 'Снеки'},
-        {name: 'Акції'},
         {name: 'Курячі крильця'},
         {name: 'Нагетси'},
         {name: 'Роли'}

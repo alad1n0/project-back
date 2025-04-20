@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Restaurant} from '@prisma/client';
+import {Product, Restaurant} from '@prisma/client';
 import {PrismaService} from '../prisma/prisma.service';
 import {ResponseHelper} from "../helper/response.helper";
 import {GetRestaurantDto} from "./dto/get-restaurant.dto";
@@ -135,36 +135,19 @@ export class RestaurantsService {
         return this.responseHelper.success(formattedRestaurant);
     }
 
-    // async findProductRestaurantCategory(restaurantId: string): Promise<Partial<Restaurant>[]> {
-    //     const categories = await this.prisma.productCategory.findMany({
-    //         where: {
-    //             restaurantId,
-    //         },
-    //         select: {
-    //             id: true,
-    //             name: true,
-    //         },
-    //     });
-    //
-    //
-    //
-    //
-    //     return this.responseHelper.success();
-    // }
-
     // create(data: Prisma.RestaurantCreateInput): Promise<Restaurant> {
-    //   return this.prisma.restaurant.create({ data });
+    //   return this.prisma.restaurants.create({ data });
     // }
 
     // update(id: string, data: Prisma.RestaurantUpdateInput): Promise<Restaurant> {
-    //   return this.prisma.restaurant.update({
+    //   return this.prisma.restaurants.update({
     //     where: { id },
     //     data,
     //   });
     // }
 
     // remove(id: string): Promise<Restaurant> {
-    //   return this.prisma.restaurant.delete({
+    //   return this.prisma.restaurants.delete({
     //     where: { id },
     //   });
     // }
@@ -178,7 +161,7 @@ export class RestaurantsService {
     //   minRating?: number;
     //   maxRating?: number;
     // }): Promise<Pick<Restaurant, 'name' | 'deliveryPrice' | 'cookingTime' | 'rating' | 'banner'>[]> {
-    //   const restaurants = await this.prisma.restaurant.findMany({
+    //   const restaurants = await this.prisma.restaurants.findMany({
     //     where: {
     //       name: filters.name ? { contains: filters.name } : undefined,
     //       deliveryPrice: (filters.minDeliveryPrice || filters.maxDeliveryPrice)

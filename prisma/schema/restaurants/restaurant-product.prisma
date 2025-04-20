@@ -3,6 +3,7 @@ model RestaurantProduct {
   restaurantId String
   productId    String
   price        Float
+  weight       Float?
   discount     Float?
   isAvailable  Boolean @default(true)
 

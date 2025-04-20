@@ -21,6 +21,7 @@ model Restaurant {
   categoryRestaurants         CategoryRestaurant[]
   restaurantProducts          RestaurantProduct[]
   restaurantProductCategories RestaurantProductCategory[]
+  basketItems                 BasketItem[]
 
   @@map("restaurants")
 }

@@ -4,8 +4,10 @@ model User {
   phone      String? @unique
   password   String?
   provider   String?
-  providerId String? @unique
-  role       Role    @default(USER)
+  googleId   String? @unique
+  facebookId String? @unique
+
+  role Role @default(USER)
 
   createdAt DateTime @default(now())
 
