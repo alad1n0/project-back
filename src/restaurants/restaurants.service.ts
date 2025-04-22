@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {Product, Restaurant} from '@prisma/client';
+import {Restaurant} from '@prisma/client';
 import {PrismaService} from '../prisma/prisma.service';
 import {ResponseHelper} from "../helper/response.helper";
 import {GetRestaurantDto} from "./dto/get-restaurant.dto";
@@ -16,12 +16,6 @@ export class RestaurantsService {
 
         const {page = 1, limit = 20, categoryId, sortByPopularity, isFreeDelivery} = paginationDto;
         const skip = (page - 1) * limit;
-
-        console.log(sortByPopularity);
-
-        console.log(sortByPopularity ? 'sortByPopularity' : 'not sortByPopularity');
-
-        console.log(isFreeDelivery ? 'isFreeDelivery' : 'not isFreeDelivery');
 
         const where: any = {};
 

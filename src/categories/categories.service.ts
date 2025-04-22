@@ -31,7 +31,7 @@ export class CategoriesService {
 
     async filndTopCategories(): Promise<Categories[]> {
         const categories = await this.prisma.categories.findMany({
-            take: 9,
+            take: 10,
             select: {
                 id: true,
                 name: true,

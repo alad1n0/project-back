@@ -19,60 +19,88 @@ export class FavoritesService {
             throw new HttpException('Token expired', HttpStatus.UNAUTHORIZED);
         }
 
-        const existingFavorite = await this.prisma.favorite.findFirst({
-            where: {
-                userId: userData.sub,
-                restaurantId: actionsFavoriteDto.restaurantId,
-            },
-        });
+        let existingFavorite: Favorite | null;
+        const { restaurantId, productId, type } = actionsFavoriteDto;
 
-        if (existingFavorite) {
-            const updatedRestaurant = await this.prisma.restaurant.findUnique({
+        if (type === 'restaurant' && restaurantId) {
+            existingFavorite = await this.prisma.favorite.findFirst({
                 where: {
-                    id: actionsFavoriteDto.restaurantId,
-                },
-                select: {
-                    id: true,
-                    name: true
+                    userId: userData.sub,
+                    restaurantId,
                 },
             });
+        } else if (type === 'product' && productId) {
+            existingFavorite = await this.prisma.favorite.findFirst({
+                where: {
+                    userId: userData.sub,
+                    productId,
+                },
+            });
+        }
 
+        if (existingFavorite) {
             await this.prisma.favorite.delete({
                 where: {
                     id: existingFavorite.id,
                 },
             });
 
-            const formattedRestaurant = {
-                ...updatedRestaurant,
-                isFavorite: false,
-            };
+            if (type === 'product' && productId) {
+                const product = await this.prisma.restaurantProduct.findUnique({
+                    where: { id: productId },
+                    select: {
+                        id: true,
+                        product: {
+                            select: {
+                                categoryId: true
+                            },
+                        },
+                    },
+                });
 
-            return this.responseHelper.success(formattedRestaurant, 'Restaurant removed from favorites');
+                return this.responseHelper.success(
+                    { id: product.id, isFavorite: false, categoryId: product.product.categoryId },
+                    'Product removed from favorites'
+                );
+            }
+
+            return this.responseHelper.success(
+                { id: restaurantId, isFavorite: false },
+                'Restaurant removed from favorites'
+            );
         } else {
             await this.prisma.favorite.create({
                 data: {
                     userId: userData.sub,
-                    restaurantId: actionsFavoriteDto.restaurantId,
+                    restaurantId: type === 'restaurant' ? restaurantId : null,
+                    productId: type === 'product' ? productId : null,
+                    type,
                 },
             });
 
-            const updatedRestaurant = await this.prisma.restaurant.findUnique({
-                where: {
-                    id: actionsFavoriteDto.restaurantId,
-                },
-                select: {
-                    id: true,
-                    name: true,
-                },
-            });
+            if (type === 'product' && productId) {
+                const product = await this.prisma.restaurantProduct.findUnique({
+                    where: { id: productId },
+                    select: {
+                        id: true,
+                        product: {
+                            select: {
+                                categoryId: true
+                            },
+                        },
+                    },
+                });
 
-            const formattedRestaurant = {
-                ...updatedRestaurant,
-                isFavorite: true,
-            };
+                return this.responseHelper.success(
+                    { id: product.id, isFavorite: true, categoryId: product.product.categoryId },
+                    'Product added to favorites'
+                );
+            }
 
-            return this.responseHelper.success(formattedRestaurant, 'Restaurant added to favorites');
+            return this.responseHelper.success(
+                { id: restaurantId, isFavorite: true },
+                'Restaurant added to favorites'
+            );
         }
     }
 
@@ -98,19 +126,40 @@ export class FavoritesService {
                         cookingTime: true,
                         deliveryPrice: true,
                         favorites: {
-                            where: {userId: userData.sub},
-                            select: {id: true},
+                            where: { userId: userData.sub },
+                            select: { id: true },
                         },
                     },
-                }
+                },
+                product: {
+                    select: {
+                        id: true,
+                        price: true,
+                        weight: true,
+                        restaurantId: true,
+                        product: {
+                            select: {
+                                name: true,
+                                description: true,
+                                image: true,
+                            }
+                        },
+                        favorites: {
+                            where: { userId: userData.sub },
+                            select: { id: true },
+                        },
+                    },
+                },
             },
         });
 
-        const formattedRestaurants = favorites
-            .filter(f => f.restaurant !== null)
-            .map(f => {
-                const r = f.restaurant;
-                return {
+        const restaurants = [];
+        const products = [];
+
+        for (const fav of favorites) {
+            if (fav.restaurant) {
+                const r = fav.restaurant;
+                restaurants.push({
                     id: r.id,
                     name: r.name,
                     banner: r.banner ? `${process.env.FILE_BASE_URL}/${r.banner}` : null,
@@ -118,10 +167,29 @@ export class FavoritesService {
                     workingHours: r.workingHours,
                     cookingTime: r.cookingTime,
                     deliveryPrice: r.deliveryPrice,
+                    type: 'restaurant',
                     isFavorite: r.favorites.length > 0,
-                };
-            });
+                });
+            }
 
-        return this.responseHelper.success(formattedRestaurants);
+            if (fav.product) {
+                const p = fav.product;
+                products.push({
+                    id: p.id,
+                    restaurantsId: p.restaurantId,
+                    name: p.product.name,
+                    price: p.price,
+                    weight: p.weight,
+                    description: p.product.description,
+                    image: p.product.image ? `${process.env.FILE_BASE_URL}/${p.product.image}` : null,
+                    isFavorite: p.favorites.length > 0,
+                })
+            }
+        }
+
+        return this.responseHelper.success({
+            restaurants,
+            products,
+        });
     }
 }

@@ -2,6 +2,7 @@ import {Injectable, NotFoundException} from '@nestjs/common';
 import {PrismaService} from '../prisma/prisma.service';
 import {ResponseHelper} from "../helper/response.helper";
 import {Product, Restaurant} from "@prisma/client";
+import {Request} from "express";
 
 @Injectable()
 export class ProductService {
@@ -219,21 +220,27 @@ export class ProductService {
         return this.responseHelper.success(formattedCategories, 'Список категорій');
     }
 
-    async findProductById(id: string, restaurantId: string): Promise<Partial<Product>> {
-        const product = await this.prisma.product.findUnique({
+    async findProductById(req: Request, id: string): Promise<Partial<Product>> {
+        const userData = req['jwt_payload'];
+
+        const product = await this.prisma.restaurantProduct.findUnique({
             where: { id },
             select: {
                 id: true,
-                name: true,
-                description: true,
-                image: true,
-                restaurantProducts: {
-                    where: { restaurantId: restaurantId },
+                price: true,
+                weight: true,
+                restaurantId: true,
+                product: {
                     select: {
-                        price: true,
-                        weight: true,
+                        name: true,
+                        description: true,
+                        image: true,
                     }
                 },
+                favorites: userData ? {
+                    where: {userId: userData.sub},
+                    select: {id: true},
+                } : false,
             },
         });
 
@@ -241,17 +248,17 @@ export class ProductService {
             throw new NotFoundException(`Продукт з id: ${id} не знайдено`);
         }
 
-        const restaurantProduct = product.restaurantProducts?.[0];
-
         const response = {
             id: product.id,
-            name: product.name,
-            description: product.description,
-            image: product.image
-                ? `${process.env.FILE_BASE_URL?.replace(/\/$/, '')}/${product.image}`
+            restaurantId: product.restaurantId,
+            name: product.product.name,
+            description: product.product.description,
+            image: product.product.image
+                ? `${process.env.FILE_BASE_URL?.replace(/\/$/, '')}/${product.product.image}`
                 : null,
-            price: restaurantProduct.price,
-            weight: restaurantProduct.weight,
+            price: product.price,
+            weight: product.weight,
+            isFavorite: userData ? product.favorites.length > 0 : false,
         };
 
         return this.responseHelper.success(response, 'Продукт успішно отримано');
@@ -318,43 +325,46 @@ export class ProductService {
         return this.responseHelper.success(formattedCategories, 'Categories with subcategories fetched successfully');
     }
 
-    async findProductByCategoryAndSubcategory(restaurantId: string, categoryId: string, subcategoryId?: string): Promise<Partial<Product>[]> {
-        const products = await this.prisma.product.findMany({
+    async findProductByCategoryAndSubcategory(req: Request, restaurantId: string, categoryId: string, subcategoryId?: string): Promise<Partial<Product>[]> {
+        const userData = req['jwt_payload'];
+
+        const products = await this.prisma.restaurantProduct.findMany({
             where: {
-                categoryId,
-                restaurantProducts: {
-                    some: {
-                        restaurantId,
-                    },
+                product: {
+                    categoryId,
+                    ...(subcategoryId && {
+                        subcategoryId,
+                    }),
                 },
-                ...(subcategoryId && {
-                    subcategoryId,
-                }),
+                restaurantId,
             },
             select: {
                 id: true,
-                name: true,
-                description: true,
-                image: true,
-                restaurantProducts: {
-                    where: {
-                        restaurantId,
-                    },
+                price: true,
+                weight: true,
+                favorites: userData ? {
+                    where: {userId: userData.sub},
+                    select: {id: true},
+                } : false,
+                product: {
                     select: {
-                        price: true,
-                        weight: true,
-                    },
+                        name: true,
+                        description: true,
+                        image: true,
+                    }
                 },
             },
         });
 
         const formattedProducts = products.map(product => ({
             id: product.id,
-            name: product.name,
-            description: product.description,
-            price: product.restaurantProducts[0]?.price || null,
-            weight: product.restaurantProducts[0]?.weight || null,
-            image: product.image ? `${process.env.FILE_BASE_URL}/${product.image}` : null,
+            restaurantId,
+            name: product.product.name,
+            description: product.product.description,
+            price: product.price,
+            weight: product.weight,
+            image: product.product.image ? `${process.env.FILE_BASE_URL}/${product.product.image}` : null,
+            isFavorite: userData ? product.favorites.length > 0 : false,
         }));
 
         return this.responseHelper.success(formattedProducts, 'Products fetched successfully');

@@ -1,13 +1,14 @@
-import {Controller, Get, Param, Query} from '@nestjs/common';
+import {Controller, Get, Param, Query, Req} from '@nestjs/common';
 import {ProductService} from './product.service';
+import {Request} from "express";
 
 @Controller('products')
 export class ProductController {
     constructor(private readonly productService: ProductService) {}
 
-    @Get(':id')
-    async findOne(@Param('id') id: string, @Query('restaurantId') restaurantId: string) {
-        return await this.productService.findProductById(id, restaurantId);
+    @Get('get-product/:id')
+    async findOne(@Req() req: Request, @Param('id') id: string) {
+        return await this.productService.findProductById(req, id);
     }
 
     @Get('get-product-restaurants-category/:id')
@@ -16,7 +17,7 @@ export class ProductController {
     }
 
     @Get('get-product-restaurants/:id')
-    findProductByCategoryAndSubcategory(@Param('id') id: string, @Query('categoryId') categoryId: string, @Query('subcategoryId') subcategoryId?: string) {
-        return this.productService.findProductByCategoryAndSubcategory(id, categoryId, subcategoryId);
+    findProductByCategoryAndSubcategory(@Req() req: Request, @Param('id') id: string, @Query('categoryId') categoryId: string, @Query('subcategoryId') subcategoryId?: string) {
+        return this.productService.findProductByCategoryAndSubcategory(req, id, categoryId, subcategoryId);
     }
 }

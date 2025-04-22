@@ -10,4 +10,7 @@ export class UpdateBasketDto {
   @IsInt()
   @Min(0)
   quantity: number;
+
+  @IsUUID()
+  restaurantId: string;
 }
