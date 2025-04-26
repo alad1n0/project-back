@@ -10,8 +10,9 @@ model RestaurantProduct {
   restaurant Restaurant @relation(fields: [restaurantId], references: [id])
   product    Product    @relation(fields: [productId], references: [id])
 
-  options   ProductOption[]
-  favorites Favorite[]
+  options     ProductOption[]
+  favorites   Favorite[]
+  basketItems BasketItem[]
 
   @@unique([restaurantId, productId])
   @@map("restaurant_products")

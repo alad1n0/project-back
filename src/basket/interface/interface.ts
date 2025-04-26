@@ -1,0 +1,3 @@
+interface SessionId {
+    sessionId: string;
+}

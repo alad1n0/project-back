@@ -1,18 +1,18 @@
 model BasketItem {
-  id                String   @id @default(uuid())
-  userId            String
-  productCategoryId String
-  productId         String
-  restaurantId      String
-  quantity          Int
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id           String   @id @default(uuid())
+  userId       String?
+  sessionId    String?
+  productId    String
+  restaurantId String
+  quantity     Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  user            User            @relation(fields: [userId], references: [id])
-  restaurant      Restaurant      @relation(fields: [restaurantId], references: [id])
-  productCategory ProductCategory @relation(fields: [productCategoryId], references: [id])
-  product         Product         @relation(fields: [productId], references: [id])
+  user       User?             @relation(fields: [userId], references: [id])
+  restaurant Restaurant        @relation(fields: [restaurantId], references: [id])
+  product    RestaurantProduct @relation(fields: [productId], references: [id])
 
-  @@unique([userId, productId, productCategoryId, restaurantId])
+  @@index([userId])
+  @@index([sessionId])
   @@map("product_basket")
 }

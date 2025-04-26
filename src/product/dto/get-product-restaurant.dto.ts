@@ -1,7 +1,7 @@
-import {IsBoolean, IsNumber, IsOptional, IsString} from "class-validator";
+import {IsNumber, IsOptional, IsString} from "class-validator";
 import {Type} from "class-transformer";
 
-export class GetRestaurantDto {
+export class GetProductRestaurantDto {
     @IsOptional()
     @Type(() => Number)
     @IsNumber()
@@ -18,14 +18,14 @@ export class GetRestaurantDto {
     categoryId?: string
 
     @IsOptional()
-    @Type(() => Boolean)
-    @IsBoolean()
-    isFreeDelivery?: boolean;
+    @Type(() => String)
+    @IsString()
+    subcategoryId?: string
 
     @IsOptional()
-    @Type(() => Boolean)
-    @IsBoolean()
-    sortByPopularity?: boolean;
+    @Type(() => String)
+    @IsString()
+    size?: string
 
     @IsOptional()
     @Type(() => String)

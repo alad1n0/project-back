@@ -349,15 +349,16 @@ async function main() {
         ],
         "Піца": [
             {
-                name: 'Пепероні',
-                description: 'Піца з пепероні, сиром та томатним соусом.',
-                subcategory: 'Пепероні',
-                image: 'product/pizza_pepperoni.jpg',
+                name: 'Піца курка-бекон',
+                description: 'Вершковий соус, сир моцарела, куряче філе, бекон, сир мармуровий, сир пармезан, кукурудза',
+                subcategory: "М'ясні",
+                image: 'product/pizza-bekon.jpg',
                 sizes: ['30 см', '40 см'],
-                restaurantNames: ['DonatelloPizza', 'Pizza House'],
+                restaurantNames: ['DonatelloPizza', 'Pizza House', 'Eats Easy'],
                 weight: {
                     'DonatelloPizza': 460,
                     'Pizza House': 470,
+                    'Eats Easy': 460,
                 },
                 prices: {
                     'DonatelloPizza': {
@@ -368,27 +369,9 @@ async function main() {
                         '30 см': 110,
                         '40 см': 130,
                     },
-                },
-            },
-            {
-                name: 'Маргарита',
-                description: 'Класична піца з сиром Маргарита.',
-                subcategory: 'Маргарита',
-                image: 'product/pizza_margherita.jpg',
-                sizes: ['30 см', '40 см'],
-                restaurantNames: ['DonatelloPizza', 'Pizza House'],
-                weight: {
-                    'DonatelloPizza': 460,
-                    'Pizza House': 470,
-                },
-                prices: {
-                    'DonatelloPizza': {
+                    'Eats Easy': {
                         '30 см': 100,
                         '40 см': 120,
-                    },
-                    'Pizza House': {
-                        '30 см': 110,
-                        '40 см': 130,
                     },
                 },
             },
@@ -406,22 +389,36 @@ async function main() {
                     'McDonald\'s': 50,
                 },
             },
+            {
+                name: 'Kid\'s burger',
+                description: 'Булочка бріош, котлета з індички, салат айсберг, помідор, маринований огірок, сир чеддер, майонез',
+                image: 'product/kdids_burger.jpg',
+                restaurantNames: ['Eats Easy'],
+                weight: {
+                    'Eats Easy': 190,
+                },
+                prices: {
+                    'Eats Easy': 240,
+                },
+            },
         ],
         "Фрі": [
             {
                 name: 'Картопля фрі',
-                description: 'Хрустка картопля фрі із соусом.',
+                description: 'Хрустка картопля фрі',
                 image: 'product/fri_classic.jpg',
-                restaurantNames: ['McDonald\'s', 'Burger King', 'KFC'],
+                restaurantNames: ['McDonald\'s', 'Burger King', 'KFC', 'Eats Easy'],
                 weight: {
                     'McDonald\'s': 300,
                     'Burger King': 310,
                     'KFC': 320,
+                    'Eats Easy': 300,
                 },
                 prices: {
                     'McDonald\'s': 30,
                     'Burger King': 35,
                     'KFC': 40,
+                    'Eats Easy': 30,
                 },
             },
         ],
@@ -540,6 +537,47 @@ async function main() {
                     'Eats Easy': 219
                 },
             }
+        ],
+        "Десерти": [
+            {
+                name: 'Вафельний торт',
+                description: 'Хрумкі вафельні коржі, згущене молоко з вершковим маслом, солона карамель та мигдалеві пластівці',
+                subcategory: "Торти",
+                image: 'product/waffle_cake.png',
+                restaurantNames: ['Eats Easy'],
+                weight: {
+                    'Eats Easy': 390
+                },
+                prices: {
+                    'Eats Easy': 219
+                }
+            },
+            {
+                name: 'Еклер Класичний',
+                description: 'Повітряне заварне тісто з ніжним вершковим кремом всередині — класика, яка ніколи не набридає',
+                subcategory: "Еклери",
+                image: 'product/eclair_classic.png',
+                restaurantNames: ['Eats Easy'],
+                weight: {
+                    'Eats Easy': 100
+                },
+                prices: {
+                    'Eats Easy': 165
+                }
+            },
+            {
+                name: 'Брауні',
+                description: 'Шоколадний десерт з насиченим смаком, без цукру, глютену та лактози — ідеальний варіант для поціновувачів здорових солодощів',
+                subcategory: "Десерти без цукру, глютену та лактози",
+                image: 'product/brownie.png',
+                restaurantNames: ['Eats Easy'],
+                weight: {
+                    'Eats Easy': 125
+                },
+                prices: {
+                    'Eats Easy': 265
+                }
+            },
         ]
     };
 

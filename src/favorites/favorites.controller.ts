@@ -1,4 +1,4 @@
-import {Controller, Post, Delete, Param, Body, Req, Get} from '@nestjs/common';
+import {Controller, Post, Body, Req, Get} from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import {ActionsFavoriteDto} from "./dto/actions-favorite.dto";
 import {Request} from "express";

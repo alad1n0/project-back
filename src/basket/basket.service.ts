@@ -16,10 +16,14 @@ export class BasketService {
     async upsertItem(req: Request, dto: UpdateBasketDto) {
         const userData = req['jwt_payload'];
 
-        const { productCategoryId, productId, quantity, restaurantId } = dto;
+        const { productId, quantity, restaurantId, sessionId } = dto;
+
+        const basketWhere = userData?.sub
+            ? { userId: userData.sub }
+            : { sessionId };
 
         const existingItems = await this.prisma.basketItem.findMany({
-            where: { userId: userData.sub },
+            where: basketWhere,
             select: { restaurantId: true },
             distinct: ['restaurantId'],
         });
@@ -31,9 +35,8 @@ export class BasketService {
 
         const existing = await this.prisma.basketItem.findFirst({
             where: {
-                userId: userData.sub,
+                ...basketWhere,
                 productId,
-                productCategoryId,
                 restaurantId,
             },
         });
@@ -47,46 +50,93 @@ export class BasketService {
             return null;
         }
 
-        let item: { id: string; userId: string; productCategoryId: string; productId: string; restaurantId: string; quantity: number; createdAt: Date; updatedAt: Date; };
+        const basketData = {
+            userId: userData?.sub ?? null,
+            sessionId: userData?.sub ? null : sessionId,
+            productId,
+            restaurantId,
+            quantity,
+        };
 
-        if (existing) {
-            item = await this.prisma.basketItem.update({
+        const item = existing
+            ? await this.prisma.basketItem.update({
                 where: { id: existing.id },
                 data: { quantity },
-            });
-        } else {
-            item = await this.prisma.basketItem.create({
-                data: {
-                    userId: userData.sub,
-                    productCategoryId,
-                    productId,
-                    restaurantId,
-                    quantity,
-                },
-            });
-        }
+            })
+            : await this.prisma.basketItem.create({ data: basketData });
 
         return this.formatter.format(item);
     }
 
-    // async getAll(userId: string) {
-    //     const items = await this.prisma.basketItem.findMany({
-    //         where: {userId},
-    //         include: {
-    //             product: true,
-    //             productCategory: true,
-    //         },
-    //     });
-    //     return items.map(i => ({
-    //         ...this.formatter.format(i),
-    //         product: i.product,
-    //         category: i.productCategory,
-    //     }));
-    // }
-
-    async getCountInBasket(req: Request) {
+    async getBasketProduct(req: Request, sessionId?: string) {
         const userData = req['jwt_payload'];
-        const count = await this.prisma.basketItem.count({ where: { userId: userData.sub } });
-        return this.responseHelper.success({count}, 'Count in basket');
+
+        const where = userData?.sub
+            ? { userId: userData.sub }
+            : sessionId
+                ? {
+                    sessionId:
+                        (sessionId as unknown as { sessionId: string }).sessionId || sessionId,
+                }
+                : {};
+
+        const items = await this.prisma.basketItem.findMany({
+            where,
+            select: {
+                productId: true,
+                quantity: true,
+                product: {
+                    select: {
+                        id: true,
+                        price: true,
+                        weight: true,
+                        restaurantId: true,
+                        product: {
+                            select: {
+                                name: true,
+                                description: true,
+                                image: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        const quantityMap = items.reduce((acc, item) => {
+            acc[item.productId] = (acc[item.productId] || 0) + item.quantity;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const formattedProducts = items.map(item => ({
+            id: item.product.id,
+            restaurantId: item.product.restaurantId,
+            name: item.product.product.name,
+            description: item.product.product.description,
+            price: item.product.price,
+            weight: item.product.weight,
+            image: item.product.product.image
+                ? `${process.env.FILE_BASE_URL}/${item.product.product.image}`
+                : null,
+            quantityInBasket: quantityMap[item.productId] ?? null,
+        }));
+
+        return this.responseHelper.success(formattedProducts, 'Basket items');
+    }
+
+    async getCountInBasket(req: Request, sessionId?: string) {
+        const userData = req['jwt_payload'];
+
+        const where = userData?.sub
+            ? { userId: userData.sub }
+            : sessionId
+                ? { sessionId: (sessionId as unknown as SessionId).sessionId || sessionId }
+                : {}
+
+        const count = await this.prisma.basketItem.count({
+            where,
+        });
+
+        return this.responseHelper.success({ count }, 'Count in basket');
     }
 }

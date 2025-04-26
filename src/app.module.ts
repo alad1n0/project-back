@@ -10,6 +10,7 @@ import {JwtMiddleware} from "./middleware/jwt.middleware";
 import {JwtModule} from "@nestjs/jwt";
 import {CategoriesModule} from "./categories/categories.module";
 import {ProductModule} from "./product/product.module";
+import {BasketModule} from "./basket/basket.module";
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import {ProductModule} from "./product/product.module";
     RestaurantsModule,
     RestaurantsModule,
     CategoriesModule,
-    ProductModule
+    ProductModule,
+    BasketModule
   ],
   providers: [PrismaService],
 })

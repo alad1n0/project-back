@@ -1,16 +1,17 @@
-import { IsUUID, IsInt, Min } from 'class-validator';
+import {Min, IsOptional, IsString, IsNumber} from 'class-validator';
 
 export class UpdateBasketDto {
-  @IsUUID()
-  productCategoryId: string;
-
-  @IsUUID()
+  @IsString()
   productId: string;
 
-  @IsInt()
+  @IsNumber()
   @Min(0)
   quantity: number;
 
-  @IsUUID()
+  @IsString()
   restaurantId: string;
+
+  @IsOptional()
+  @IsString()
+  sessionId?: string
 }
