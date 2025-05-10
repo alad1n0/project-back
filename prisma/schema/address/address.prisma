@@ -1,9 +1,15 @@
 model Address {
-  id         String  @id @default(uuid())
-  street     String?
-  city       String?
-  postalCode String?
-  country    String?
+  id        String  @id @default(uuid())
+  city      String?
+  locality  String?
+  street    String?
+  house     String?
+  flat      String?
+  floor     String?
+  apartment String?
+  comment   String?
+  type      String  @default("city")
+  isMain    Boolean
 
   userProfileId String
   userProfile   UserProfile @relation(fields: [userProfileId], references: [id]) // Один користувач може мати багато адрес
