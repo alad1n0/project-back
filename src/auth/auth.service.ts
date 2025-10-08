@@ -30,7 +30,7 @@ export class AuthService {
         const sendOtpCode = await this.otpService.sendOtpCode(phone, otp);
 
         if (sendOtpCode) {
-            return this.responseHelper.success([], 'Code sent successfully');
+            return this.responseHelper.success(otp, 'Code sent successfully');
         } else {
             return this.responseHelper.error('Failed to send OTP code', 500);
         }
