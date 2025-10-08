@@ -7,11 +7,7 @@ export class OtpService {
     sendOtpCode = async (phone: string, otp: string) => {
         const { apiKey, sender } = infobipConfig;
 
-        const formatPhoneNumber = (phone: string) => {
-            return phone.replace(/\s+/g, '').replace(/^\+/, '');
-        };
-
-        const formattedPhone = formatPhoneNumber(phone);
+        const formattedPhone = phone.replace(/\s+/g, '');
 
         const data = JSON.stringify({
             "messages": [
@@ -25,7 +21,7 @@ export class OtpService {
 
         const options = {
             method: 'POST',
-            hostname: 'z3n346.api.infobip.com',
+            hostname: 'https://z3n346.api.infobip.com',
             path: '/sms/2/text/advanced',
             headers: {
                 'Authorization': `App ${apiKey}`,
