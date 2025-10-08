@@ -25,7 +25,7 @@ export class OtpService {
 
         const options = {
             method: 'POST',
-            hostname: 'z3yyvx.api.infobip.com',
+            hostname: 'z3n346.api.infobip.com',
             path: '/sms/2/text/advanced',
             headers: {
                 'Authorization': `App ${apiKey}`,
